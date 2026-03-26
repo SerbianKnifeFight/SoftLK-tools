@@ -25,7 +25,7 @@ In general, I try to keep the amount of external dependencies as low as possible
 ## Building
 
 * cd into SLK_img2pixels directory: ``cd SLK_img2pixel``
-* there are multiple build scripts in the folder (linux.sh, win_cross.sh), running these generates a makefile for building the program, to build, pipe the output into make: ``sh linux.sh | make -f -``
+* there are multiple build scripts in the folder (linux.sh, win_cross.sh, mac.sh), running these generates a makefile for building the program, to build, pipe the output into make: ``sh linux.sh | make -f -``
 * alternatively, there is a pre-generated makefile for the linux version, to compile, simply run ``make``
 * The binary can be found at the top level of the repo in the ``bin/`` directory
 
