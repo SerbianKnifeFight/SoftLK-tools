@@ -1,7 +1,7 @@
 ## About this fork
 This is a fork of [Captain4LK's SLK_img2pixel](https://github.com/Captain4LK/SoftLK-tools),
 a tool for turning images into pixel art created by June/SerbianKnifeFight.
-I've only touched img2pixel, the other programs remain untouched, for more info please see [SLK_img2pixel/FORK_README.md](FORK_README.md)
+I've only touched img2pixel, the other programs remain untouched, for more info please see [FORK_README.md](SLK_img2pixel/FORK_README.md)
 
 # SoftLK-tools
 
