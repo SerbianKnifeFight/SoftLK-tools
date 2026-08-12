@@ -102,12 +102,7 @@ static const float slk_dither_threshold_cluster4x4[16] =
    11.0f/16.0f,3.0f/16.0f,2.0f/16.0f,8.0f/16.0f,
    15.0f/16.0f,10.0f/16.0f,9.0f/16.0f,14.0f/16.0f,
 };
-//Non-power-of-two dispersed-dot ("Bayer-style") threshold maps.
-//True Bayer matrices only exist for power-of-two sizes (they're built by
-//recursively subdividing a 2x2 base matrix); 3x3/5x5 are generated with a
-//greedy void-filling placement instead (each new threshold is placed on the
-//cell that is farthest, toroidally, from every previously-placed cell),
-//which gives the same kind of evenly-dispersed dot pattern.
+//Non-power-of-two dispersed-dot threshold maps (generated, not recursive Bayer)
 static const float slk_dither_threshold_bayer3x3[9] = 
 {
    1.0f/9.0f,3.0f/9.0f,7.0f/9.0f,
@@ -543,10 +538,7 @@ static SLK_img8and32 slk_assign_median(Image64 *img, const SLK_dither_config *co
    return (SLK_img8and32){out, out32};
 }
 
-//'size' is the matrix width/height (e.g. 8 for an 8x8 matrix). Works for any
-//size, power-of-two or not - power-of-two sizes used to be indexed with a
-//bitmask (faster), but a plain modulo is cheap enough and lets the same
-//function serve the new 3x3/5x5 matrices too.
+//'size' is the matrix width/height, works for any size now, not just power-of-two
 static void slk_dither_threshold_apply(Image64 *img, int size, const float *threshold, const SLK_dither_config *config)
 {
 #pragma omp parallel for
@@ -654,10 +646,7 @@ static void slk_floyd_apply_error(Image64 *img, float er, float eg, float eb, in
    img->data[y*img->width+x] = (r)|(g<<16)|(b<<32)|(a<<48);
 }
 
-//Generic error-diffusion ditherer: same per-pixel error computation as
-//slk_dither_floyd, but spreads the error to neighbouring pixels using
-//whatever kernel is passed in (Stucki/Burkes/Sierra/etc. all only differ
-//in their kernel, so they share this one implementation).
+//Generic error-diffusion, kernel decides which algorithm (Stucki/Burkes/Sierra/...)
 static SLK_img8and32 slk_dither_diffusion(Image64 *img, const SLK_dither_config *config, const slk_diffusion_kernel_entry *kernel, int kernel_count)
 {
    Image8 *out = image8_new(img->width,img->height);
@@ -694,9 +683,7 @@ static SLK_img8and32 slk_dither_diffusion(Image64 *img, const SLK_dither_config 
    return (SLK_img8and32){out, out32};
 }
 
-//Finds the closest and second-closest palette entries to a color, plus how
-//far the color sits between them (t=0 --> exactly index0, t=1 --> exactly
-//index1). Used by the picoCAD-style ditherer below.
+//Closest and second-closest palette colors + blend factor t, for picoCAD dither
 static void slk_color_closest_two(uint64_t c, const SLK_dither_config *config, uint8_t *index0, uint8_t *index1, float *t)
 {
    float best0 = 1e12f;
@@ -782,12 +769,7 @@ static void slk_color_closest_two(uint64_t c, const SLK_dither_config *config, u
       *t = HLH_max(0.f,HLH_min(1.f,((cr-p0r)*dr+(cg-p0g)*dg+(cb-p0b)*db)/len2));
 }
 
-//picoCAD's shading dither: rather than blending between two colors with a
-//multi-level ordered/error-diffusion pattern, picoCAD only ever uses a
-//single fixed 1:1 checkerboard between the two closest palette colors -
-//so every gradient step is either a flat color, or exactly a 50/50 checker
-//between it and the next color in the ramp. See picoCAD forum discussion
-//for the "single checkered pattern" description this is modeled on.
+//picoCAD-style dither: just one fixed checker pattern between the 2 closest colors
 static SLK_img8and32 slk_dither_picocad(Image64 *img, const SLK_dither_config *config)
 {
    Image8 *out = image8_new(img->width,img->height);

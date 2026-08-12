@@ -627,9 +627,7 @@ static int lua_img2pixel_print(lua_State *L)
    return 0;
 }
 
-//Every scalar setting a script can read/write on the img2pixel table,
-//mirroring exactly the field names used by the JSON preset format (see
-//slk_load_preset above), so presets and scripts agree on naming.
+//Scalar settings a script can read/write on img2pixel, same names as the JSON preset
 typedef enum
 {
    LUA_FIELD_FLOAT,

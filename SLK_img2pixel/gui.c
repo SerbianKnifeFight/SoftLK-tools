@@ -968,9 +968,7 @@ static void gui_input_gif_free(void)
    gui_input_gif_frame_count = 1;
 }
 
-//Shared by "Load > Image" and drag&drop: loads 'path' as the new input
-//image, decoding every frame if it's a GIF (so "Save > Image" can later
-//write an animated GIF back out), and refreshes the live preview.
+//Shared by "Load > Image" and drag&drop - decodes every frame if it's a GIF
 static void gui_set_input_path(const char *path)
 {
    if(path==NULL)
@@ -2104,10 +2102,7 @@ static int main_window_msg(HLH_gui_element *e, HLH_gui_msg msg, int di, void *dp
 //Lua scripting
 //-------------------------------------
 
-//Runs the full conversion pipeline on an arbitrary in/out file pair, using
-//whatever settings are currently set (same globals gui_process() reads) -
-//but entirely independent of the live preview (gui_input/gui_output),
-//so running a script never disturbs whatever image is currently open.
+//Runs the pipeline on an arbitrary in/out pair, independent of the live preview
 static int gui_script_process(const char *path_in, const char *path_out)
 {
    char ext_in[512] = {0};
@@ -2269,8 +2264,7 @@ static int gui_script_process(const char *path_in, const char *path_out)
    return ok?0:-1;
 }
 
-//Growing buffer that captures a script's print() output, since a GUI app
-//has no visible console to print to - shown in the Script window instead.
+//Captures a script's print() output for the Script window (no console in the GUI)
 static char script_output[8192] = {0};
 
 static void script_output_append(const char *s)

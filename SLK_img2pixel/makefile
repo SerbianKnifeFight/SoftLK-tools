@@ -60,7 +60,7 @@ obj=  ./tint.o ./sharp.o ./sample.o ./postprocess.o ./palette.o ./kmeans.o ./hsc
 luaobj= ../external/lua/lapi.o ../external/lua/lauxlib.o ../external/lua/lbaselib.o ../external/lua/lcode.o ../external/lua/lcorolib.o ../external/lua/lctype.o ../external/lua/ldblib.o ../external/lua/ldebug.o ../external/lua/ldo.o ../external/lua/ldump.o ../external/lua/lfunc.o ../external/lua/lgc.o ../external/lua/linit.o ../external/lua/liolib.o ../external/lua/llex.o ../external/lua/lmathlib.o ../external/lua/lmem.o ../external/lua/loadlib.o ../external/lua/lobject.o ../external/lua/lopcodes.o ../external/lua/loslib.o ../external/lua/lparser.o ../external/lua/lstate.o ../external/lua/lstring.o ../external/lua/lstrlib.o ../external/lua/ltable.o ../external/lua/ltablib.o ../external/lua/ltm.o ../external/lua/lundump.o ../external/lua/lutf8lib.o ../external/lua/lvm.o ../external/lua/lzio.o
 
 ../external/lua/%.o: ../external/lua/%.c
-	gcc -c $< -o $@ -O2 -std=c99
+	gcc -c $< -o $@ -O2 -std=c99 -DLUA_USE_POSIX
 
 main/main.o: main/main.c ../HLH_gui/HLH.h ../HLH_gui/HLH_path.h \
  ../HLH_gui/HLH_rw.h ../HLH_gui/HLH_json.h \
