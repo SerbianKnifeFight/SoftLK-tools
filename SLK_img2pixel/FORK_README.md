@@ -1,4 +1,4 @@
-# SLK_img2pixel — this fork
+# SLK_img2pixel june's fork
 
 This is a fork of [Captain4LK's SLK_img2pixel](https://github.com/Captain4LK/SoftLK-tools),
 a tool for turning images into pixel art. Everything the original tool
@@ -19,12 +19,12 @@ instructions (including everything below), see [MANUAL.md](MANUAL.md).
   settings, render every dither mode for comparison, etc. Full reference
   in [LUA_SCRIPTING.md](LUA_SCRIPTING.md).
 
-Nothing existing was removed or changed in behavior — default settings,
+Nothing existing was removed or changed in behavior, default settings,
 existing presets, and existing palettes all still work exactly as before.
 
 ## Building from source
 
-Same dependencies as upstream (just SDL2 — Lua is vendored directly into
+Same dependencies as upstream (just SDL2 Lua is vendored directly into
 `external/lua/`, no separate install needed).
 
 ```sh
@@ -40,11 +40,11 @@ scripts follow the same shape, just with the new source files added).
 ### A note on `win_cross.sh`
 
 This script hardcodes the original author's own toolchain path
-(`/mnt/sdb1/apps/llvm-mingw-...`) — that's a pre-existing upstream quirk,
+(`/mnt/sdb1/apps/llvm-mingw-...`) - that's a pre-existing upstream quirk,
 not something this fork introduced. You'll need to point `CC`/`CXX` at
 your own mingw-w64 toolchain if you use it. If you just want a Windows
 build without fighting that script, a plain mingw-w64 cross-compile
-works fine too — see the "Building on Windows" section in
+works fine too - see the "Building on Windows" section in
 [MANUAL.md](MANUAL.md).
 
 ## What wasn't touched

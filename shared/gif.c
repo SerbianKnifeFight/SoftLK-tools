@@ -3,13 +3,8 @@ SLK_img2pixel - a tool for converting images to pixelart
 
 Minimal animated GIF writer - see gif.h for the public API.
 
-Written in 2026, released to the public domain (CC0), same terms as the
+Written in 2026 by June / SerbianKnifeFight, released to the public domain (CC0), same terms as the
 rest of this project - see COPYING.
-
-Implements the GIF89a container (global color table, NETSCAPE2.0 loop
-extension, per-frame graphic control extension for delay/transparency)
-with a standard variable-width LZW encoder for the pixel data, written
-from scratch against the GIF89a specification.
 */
 
 //External includes

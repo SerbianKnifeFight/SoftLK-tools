@@ -1,15 +1,12 @@
 /*
 SLK_img2pixel - a tool for converting images to pixelart
 
-Shared multi-frame GIF reader - see gif_read.h.
+Multi-frame GIF reader - see gif_read.h.
 
-This is the only translation unit that compiles a full (non-static)
-stb_image implementation, so both SLK_img2pix and SLK_img2pix_cmd can
-link against it. HLH_gui_core.c also uses stb_image, but compiles it
-with STB_IMAGE_STATIC, so there's no clash: that copy's functions are
-file-local, this one's are the "real" externally-visible symbols.
+Only TU with a full stb_image build (HLH_gui_core.c uses STB_IMAGE_STATIC,
+so its copy is file-local - no symbol clash).
 
-Written in 2026, released to the public domain (CC0), same terms as the
+Written in 2026 by June / SerbianKnifeFight, released to the public domain (CC0), same terms as the
 rest of this project - see COPYING.
 */
 
