@@ -3,7 +3,7 @@ HLH_gui - a small immediate-mode-ish gui library
 
 See HLH_gui_theme.h.
 
-Written in 2026, released to the public domain (CC0), same terms as the
+Written in 2026 by June / SerbianKnifeFight, released to the public domain (CC0), same terms as the
 rest of this project - see COPYING.
 */
 
