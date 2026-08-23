@@ -24,9 +24,9 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 //-------------------------------------
 
 //Lua
-#include "../external/lua/lua.h"
-#include "../external/lua/lauxlib.h"
-#include "../external/lua/lualib.h"
+#include "external/lua/lua.h"
+#include "external/lua/lauxlib.h"
+#include "external/lua/lualib.h"
 //-------------------------------------
 
 //Internal includes
@@ -379,7 +379,7 @@ static int button_theme_preset_msg(HLH_gui_element *e, HLH_gui_msg msg, int di, 
       else if(e->usr==3)
       {
          HLH_gui_theme_current.bg = 0xff9933ff;
-         HLH_gui_theme_current.border = 0xffcc33ff;
+         HLH_gui_theme_current.border = 0xffcc33aa;
          HLH_gui_theme_current.bevel_dark = 0xff9900cc;
          HLH_gui_theme_current.bevel_light = 0xffff99ff;
          HLH_gui_theme_current.text = 0xff000000;

@@ -35,9 +35,9 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 //-------------------------------------
 
 //Lua
-#include "../../external/lua/lua.h"
-#include "../../external/lua/lauxlib.h"
-#include "../../external/lua/lualib.h"
+#include "external/lua/lua.h"
+#include "external/lua/lauxlib.h"
+#include "external/lua/lualib.h"
 //-------------------------------------
 
 //Internal includes

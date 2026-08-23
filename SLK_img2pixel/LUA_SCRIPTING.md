@@ -1,13 +1,22 @@
 # Lua scripting
 
-Both SLK_img2pix_cmd (--script file.lua) and SLK_img2pix (Tools > Run script...) can run Lua 5.4 scripts. A script sees one global table, img2pixel, and through it can change any setting the GUI's tabs expose, and process images.
+Both **SLK_img2pix_cmd** (`--script file.lua`) and **SLK_img2pix**
+(**Tools > Run script...**) can run Lua 5.4 scripts. A script sees one
+global table, `img2pixel`, through which it can change every setting the
+GUI's tabs expose, and process images.
 
-Scripts can't add new dither algorithms or change the UI. What they can do is drive the existing pipeline programmatically: loops, conditionals, file discovery, batching, and picking settings based on logic.
+This isn't a plugin system, scripts can't add new dither algorithms or
+change the UI. What they *can* do is drive the existing pipeline
+programmatically: loops, conditionals, file discovery, batching, and
+picking settings based on logic, none of which the GUI or a single preset
+file can do on its own.
 
-## What it's not for
-
-- It doesn't touch the live GUI preview or whatever image you currently have loaded. img2pixel.process() always reads from and writes to files on disk, independent of anything you have open. This is on purpose, so running a script never surprises you by changing what's on screen without warning. That said, once the script finishes, the GUI's sliders and preview do refresh to reflect any settings the script changed.
-- It can't add new C-level image operations. It can only automate the ones that already exist.
+It doesn't touch the live GUI preview or your currently-loaded image
+  `img2pixel.process()` always reads from and writes to files on disk,
+  independent of whatever you have open. This is deliberate: running a
+  script never surprises you by changing what's on screen out from under
+  you (though after the script finishes, the GUI's sliders and preview
+  *do* refresh to reflect any settings the script changed).
 
 ## Quick start
 
@@ -22,32 +31,37 @@ local ok = img2pixel.process("input.png", "output.png")
 print("done:", ok)
 ```
 
-Run it with `SLK_img2pix_cmd --script convert.lua`, or load it through Tools > Run script... in the GUI.
+Run it with `SLK_img2pix_cmd --script convert.lua`, or load it via
+**Tools > Run script...** in the GUI.
 
 ## Settings
 
-These are plain fields on img2pixel. Read or write them directly and they map straight onto the same values used by the JSON preset format and the GUI's sliders.
+These are plain fields on `img2pixel` — read or write them directly, they
+map straight onto the same values the JSON preset format and the GUI's
+sliders use.
 
 | Field | Type | Matches GUI control |
 |---|---|---|
-| blur_amount | number | Sample tab: Blur amount |
-| sharp_amount | number | Sample tab: Sharpen amount |
-| sample_mode | integer | Sample tab: Sample mode (0=Nearest, 1=Bilinear, 2=Bicubic, 3=Lanczos, 4=Cluster) |
-| x_offset, y_offset | number | Sample tab: Sample x/y offset |
-| scale_relative | boolean | Sample tab: Absolute/Relative toggle |
-| size_absolute_x, size_absolute_y | integer | Sample tab: Width/Height (absolute mode) |
-| size_relative_x, size_relative_y | integer | Sample tab: Scale X/Y (relative mode) |
-| dither_mode | integer | Dither tab: Dither/Assignment mode, use img2pixel.DITHER.* rather than a raw number |
-| color_dist | integer | Dither tab: Distance metric, use img2pixel.COLORDIST.* |
-| dither_amount | number | Dither tab: Dither amount |
-| dither_alpha_threshold | integer (0-255) | Dither tab: Alpha threshold |
-| target_colors | integer | (Median-cut) target color count |
-| palette_colors | integer (1-256) | Palette tab: Color count |
-| kmeanspp | boolean | Palette tab: k-means++ checkbox |
-| brightness, contrast, saturation, hue, gamma | number | Colors tab |
-| tint_red, tint_green, tint_blue | integer (0-255) | Colors tab: Tint |
+| `blur_amount` | number | Sample tab: Blur amount |
+| `sharp_amount` | number | Sample tab: Sharpen amount |
+| `sample_mode` | integer | Sample tab: Sample mode (0=Nearest, 1=Bilinear, 2=Bicubic, 3=Lanczos, 4=Cluster) |
+| `x_offset`, `y_offset` | number | Sample tab: Sample x/y offset |
+| `scale_relative` | boolean | Sample tab: Absolute/Relative toggle |
+| `size_absolute_x`, `size_absolute_y` | integer | Sample tab: Width/Height (absolute mode) |
+| `size_relative_x`, `size_relative_y` | integer | Sample tab: Scale X/Y (relative mode) |
+| `dither_mode` | integer | Dither tab: Dither/Assignment mode — use `img2pixel.DITHER.*` (see below) rather than a raw number |
+| `color_dist` | integer | Dither tab: Distance metric — use `img2pixel.COLORDIST.*` |
+| `dither_amount` | number | Dither tab: Dither amount |
+| `dither_alpha_threshold` | integer (0-255) | Dither tab: Alpha threshold |
+| `target_colors` | integer | (Median-cut) target color count |
+| `palette_colors` | integer (1-256) | Palette tab: Color count |
+| `kmeanspp` | boolean | Palette tab: k-means++ checkbox |
+| `brightness`, `contrast`, `saturation`, `hue`, `gamma` | number | Colors tab |
+| `tint_red`, `tint_green`, `tint_blue` | integer (0-255) | Colors tab: Tint |
 
-Reading a field that isn't set returns nil. Writing to an unknown field name raises a Lua error, so a typo will fail loudly instead of quietly doing nothing.
+Reading an unset/unknown field returns `nil`; writing an unknown field
+name raises a Lua error (so a typo fails loudly instead of silently doing
+nothing).
 
 ## Named constants
 
@@ -57,33 +71,50 @@ Instead of memorizing dither-mode numbers, use:
 img2pixel.dither_mode = img2pixel.DITHER.PICOCAD
 ```
 
-img2pixel.DITHER has one entry per mode: NONE, BAYER8X8, BAYER4X4, BAYER2X2, CLUSTER8X8, CLUSTER4X4, FLOYD, FLOYD2, MEDIAN_CUT, BAYER5X5, BAYER3X3, STUCKI, BURKES, SIERRA, SIERRA_TWOROW, SIERRA_LITE, PICOCAD.
+`img2pixel.DITHER` has one entry per mode: `NONE`, `BAYER8X8`, `BAYER4X4`,
+`BAYER2X2`, `CLUSTER8X8`, `CLUSTER4X4`, `FLOYD`, `FLOYD2`, `MEDIAN_CUT`,
+`BAYER5X5`, `BAYER3X3`, `STUCKI`, `BURKES`, `SIERRA`, `SIERRA_TWOROW`,
+`SIERRA_LITE`, `PICOCAD`.
 
-img2pixel.COLORDIST has: RGB_EUCLIDIAN, RGB_WEIGHTED, RGB_REDMEAN, LAB_CIE76, LAB_CIE94, LAB_CIEDE2000.
+`img2pixel.COLORDIST` has: `RGB_EUCLIDIAN`, `RGB_WEIGHTED`, `RGB_REDMEAN`,
+`LAB_CIE76`, `LAB_CIE94`, `LAB_CIEDE2000`.
 
 ## Functions
 
-### img2pixel.process(in_path, out_path), returns boolean
+### `img2pixel.process(in_path, out_path)` → boolean
 
-Runs the full pipeline (sample, dither, save) on in_path using the current settings, and writes the result to out_path. The output format is decided by out_path's extension, same as the GUI's Save dialog. A .gif extension writes an animated GIF (all frames, if the input was itself an animated GIF), anything else writes a single still image. Returns true on success and false on failure (bad path, unreadable image, etc). It does not raise an error, so check the return value if you need to know what happened.
+Runs the full pipeline (sample → dither → save) on `in_path` using the
+current settings, writing to `out_path`. Output format is decided by
+`out_path`'s extension, same as the GUI's Save dialog — `.gif` writes an
+animated GIF (all frames, if the input was an animated GIF); anything
+else writes a single still image. Returns `true` on success, `false` on
+failure (bad path, unreadable image, etc.) — it does not raise an error,
+so check the return value if you need to know.
 
-### img2pixel.load_preset(path), returns boolean
+### `img2pixel.load_preset(path)` → boolean
 
-Loads a JSON preset file, the same format Save > Preset writes, and overwrites the current settings fields. Returns true or false.
+Loads a JSON preset file (the same format **Save > Preset** writes),
+overwriting the current settings fields. Returns `true`/`false`.
 
-### img2pixel.get_palette_color(index), returns integer
+### `img2pixel.get_palette_color(index)` → integer
 
-Returns palette entry index (0-255) as a 0xRRGGBB integer.
+Returns palette entry `index` (0-255) as a `0xRRGGBB` integer.
 
-### img2pixel.set_palette_color(index, rgb)
+### `img2pixel.set_palette_color(index, rgb)`
 
-Sets palette entry index (0-255) to the color rgb, given as a 0xRRGGBB integer (0xff8000 for orange, for example).
+Sets palette entry `index` (0-255) to the color `rgb` (a `0xRRGGBB`
+integer, e.g. `0xff8000` for orange).
 
-### print(...)
+### `print(...)`
 
-Standard Lua print. On the command line this goes to stdout as normal. In the GUI, the output is captured and shown in the Run Script window instead, since there's no console to print to there.
+Standard Lua `print`. On the command line this goes to stdout as normal;
+in the GUI, output is captured and shown in the Run Script window instead
+(there's no console to print to there).
 
-Everything else in the standard Lua library is available too: string, table, math, os, io, loops, pcall, and so on. Scripts run with the same access to your filesystem as the app itself, same as any local script you'd run yourself.
+Everything else in the standard Lua library is available too (`string`,
+`table`, `math`, `os`, `io`, loops, `pcall`, etc.) — scripts run with the
+same access to your filesystem as the app itself, same as any local
+script you'd run yourself.
 
 ## Examples
 
@@ -105,7 +136,7 @@ print("done")
 
 ```lua
 -- requires an external file-listing helper since Lua's stdlib alone
--- can't list directory contents, os.execute + a shell command works:
+-- can't list directory contents; os.execute + a shell command works:
 local p = io.popen('ls *.png')
 for filename in p:lines() do
    if filename:find("icon") then
