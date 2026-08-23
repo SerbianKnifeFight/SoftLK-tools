@@ -6,17 +6,17 @@ global table, `img2pixel`, through which it can change every setting the
 GUI's tabs expose, and process images.
 
 This isn't a plugin system, scripts can't add new dither algorithms or
-change the UI. What they *can* do is drive the existing pipeline
+change the UI. What they can do is drive the existing pipeline
 programmatically: loops, conditionals, file discovery, batching, and
 picking settings based on logic, none of which the GUI or a single preset
 file can do on its own.
 
-It doesn't touch the live GUI preview or your currently-loaded image
-  `img2pixel.process()` always reads from and writes to files on disk,
-  independent of whatever you have open. This is deliberate: running a
-  script never surprises you by changing what's on screen out from under
-  you (though after the script finishes, the GUI's sliders and preview
-  *do* refresh to reflect any settings the script changed).
+It doesn't touch the live GUI preview or your currently-loaded image.
+`img2pixel.process()` always reads from and writes to files on disk,
+independent of whatever you have open. This is deliberate, so running a
+script never changes what's on screen out from under you (though once
+the script finishes, the GUI's sliders and preview do refresh to reflect
+any settings the script changed).
 
 ## Quick start
 
@@ -36,7 +36,7 @@ Run it with `SLK_img2pix_cmd --script convert.lua`, or load it via
 
 ## Settings
 
-These are plain fields on `img2pixel` — read or write them directly, they
+These are plain fields on `img2pixel`, read or write them directly. They
 map straight onto the same values the JSON preset format and the GUI's
 sliders use.
 
@@ -49,8 +49,8 @@ sliders use.
 | `scale_relative` | boolean | Sample tab: Absolute/Relative toggle |
 | `size_absolute_x`, `size_absolute_y` | integer | Sample tab: Width/Height (absolute mode) |
 | `size_relative_x`, `size_relative_y` | integer | Sample tab: Scale X/Y (relative mode) |
-| `dither_mode` | integer | Dither tab: Dither/Assignment mode — use `img2pixel.DITHER.*` (see below) rather than a raw number |
-| `color_dist` | integer | Dither tab: Distance metric — use `img2pixel.COLORDIST.*` |
+| `dither_mode` | integer | Dither tab: Dither/Assignment mode, use `img2pixel.DITHER.*` (see below) rather than a raw number |
+| `color_dist` | integer | Dither tab: Distance metric, use `img2pixel.COLORDIST.*` |
 | `dither_amount` | number | Dither tab: Dither amount |
 | `dither_alpha_threshold` | integer (0-255) | Dither tab: Alpha threshold |
 | `target_colors` | integer | (Median-cut) target color count |
@@ -59,9 +59,9 @@ sliders use.
 | `brightness`, `contrast`, `saturation`, `hue`, `gamma` | number | Colors tab |
 | `tint_red`, `tint_green`, `tint_blue` | integer (0-255) | Colors tab: Tint |
 
-Reading an unset/unknown field returns `nil`; writing an unknown field
-name raises a Lua error (so a typo fails loudly instead of silently doing
-nothing).
+Reading an unset/unknown field returns `nil`. Writing an unknown field
+name raises a Lua error, so a typo fails loudly instead of silently doing
+nothing.
 
 ## Named constants
 
@@ -81,22 +81,22 @@ img2pixel.dither_mode = img2pixel.DITHER.PICOCAD
 
 ## Functions
 
-### `img2pixel.process(in_path, out_path)` → boolean
+### `img2pixel.process(in_path, out_path)` -> boolean
 
-Runs the full pipeline (sample → dither → save) on `in_path` using the
-current settings, writing to `out_path`. Output format is decided by
-`out_path`'s extension, same as the GUI's Save dialog — `.gif` writes an
-animated GIF (all frames, if the input was an animated GIF); anything
+Runs the full pipeline (sample, dither, save) on `in_path` using the
+current settings, and writes to `out_path`. Output format is decided by
+`out_path`'s extension, same as the GUI's Save dialog: `.gif` writes an
+animated GIF (all frames, if the input was an animated GIF), anything
 else writes a single still image. Returns `true` on success, `false` on
-failure (bad path, unreadable image, etc.) — it does not raise an error,
+failure (bad path, unreadable image, etc.). It does not raise an error,
 so check the return value if you need to know.
 
-### `img2pixel.load_preset(path)` → boolean
+### `img2pixel.load_preset(path)` -> boolean
 
 Loads a JSON preset file (the same format **Save > Preset** writes),
 overwriting the current settings fields. Returns `true`/`false`.
 
-### `img2pixel.get_palette_color(index)` → integer
+### `img2pixel.get_palette_color(index)` -> integer
 
 Returns palette entry `index` (0-255) as a `0xRRGGBB` integer.
 
@@ -107,12 +107,12 @@ integer, e.g. `0xff8000` for orange).
 
 ### `print(...)`
 
-Standard Lua `print`. On the command line this goes to stdout as normal;
-in the GUI, output is captured and shown in the Run Script window instead
-(there's no console to print to there).
+Standard Lua `print`. On the command line this goes to stdout as normal.
+In the GUI, output is captured and shown in the Run Script window instead,
+since there's no console to print to there.
 
 Everything else in the standard Lua library is available too (`string`,
-`table`, `math`, `os`, `io`, loops, `pcall`, etc.) — scripts run with the
+`table`, `math`, `os`, `io`, loops, `pcall`, etc.). Scripts run with the
 same access to your filesystem as the app itself, same as any local
 script you'd run yourself.
 
